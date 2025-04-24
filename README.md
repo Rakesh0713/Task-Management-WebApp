@@ -55,7 +55,7 @@ TaskRocket/
 ## 📦 How to Run
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/taskrocket.git
+git clone https://github.com/Rakesh0713/taskrocket.git
 cd taskrocket
 
 # Build the project
