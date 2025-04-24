@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Tasks</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f8;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #102030;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            text-align: center;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+
+        .button-padded-gradient {
+            background: linear-gradient(to bottom, #30e3ca 5%, #27d1b7 100%);
+            background-color: #30e3ca;
+            border-radius: 28px;
+            border: 1px solid #249c8e;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: "Times New Roman", serif;
+            font-size: 17px;
+            font-style: italic;
+            padding: 11px 55px;
+            text-decoration: none;
+            text-shadow: 0px 1px 0px #1b6461;
+            transition: background 0.3s ease-in-out;
+            text-align: center;
+        }
+
+        .button-padded-gradient:hover {
+            background: linear-gradient(to bottom, #27d1b7 5%, #30e3ca 100%);
+            background-color: #27d1b7;
+        }
+
+        .button-padded-gradient:active {
+            position: relative;
+            top: 1px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #fff;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #102030;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            background-color: #eef2f5;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .task-card h3 {
+            margin-top: 0;
+            color: #102030;
+        }
+
+        .task-card p {
+            margin: 8px 0;
+        }
+
+        .task-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .task-actions form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #30e3ca;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #27d1b7;
+        }
+
+        .delete-button {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #e63b3b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Task Rocket 🚀</h2>
+    <a href="/addTaskPage" class="button-padded-gradient">Add Task</a>
+    <a href="/viewTasks" class="button-padded-gradient">Manage Tasks</a>
+    <a href="/logout" class="button-padded-gradient">Logout</a>
+</div>
+
+<div class="main-content">
+    <h1>Your Tasks</h1>
+
+    <div th:each="task : ${tasks}" class="task-card">
+        <h3 th:text="${task.title}"></h3>
+        <p><strong>Description:</strong> <span th:text="${task.description}"></span></p>
+        <p><strong>Deadline:</strong> <span th:text="${task.deadline}"></span></p>
+        <p>
+            <strong>Days Remaining:</strong>
+            <span th:if="${task.deadline != null}"
+                  th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), task.deadline)} + ' days left'">
+            </span>
+        </p>
+
+        <div class="task-actions">
+            <form action="/updateTaskFromList" method="post">
+                <input type="hidden" name="id" th:value="${task.id}">
+                <select name="status">
+                    <option th:selected="${task.status == 'Pending'}">Pending</option>
+                    <option th:selected="${task.status == 'In Progress'}">In Progress</option>
+                    <option th:selected="${task.status == 'Completed'}">Completed</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+            <form th:action="@{/deleteTaskFromList/{id}(id=${task.id})}" method="get">
+                <button type="submit" class="delete-button">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

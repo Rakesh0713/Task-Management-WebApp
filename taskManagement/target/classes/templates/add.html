@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Task</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f8;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #102030;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            text-align: center;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #fff;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #102030;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+        }
+
+        input[type="text"], input[type="date"], select, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .button-padded-gradient {
+            background: linear-gradient(to bottom, #30e3ca 5%, #27d1b7 100%);
+            background-color: #30e3ca;
+            border-radius: 28px;
+            border: 1px solid #249c8e;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: "Times New Roman", serif;
+            font-size: 17px;
+            font-style: italic;
+            padding: 11px 55px;
+            text-decoration: none;
+            text-shadow: 0px 1px 0px #1b6461;
+            transition: background 0.3s ease-in-out;
+            text-align: center;
+        }
+
+        .button-padded-gradient:hover {
+            background: linear-gradient(to bottom, #27d1b7 5%, #30e3ca 100%);
+            background-color: #27d1b7;
+        }
+
+        .button-padded-gradient:active {
+            position: relative;
+            top: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Task Rocket 🚀</h2>
+    <a href="/addTaskPage" class="button-padded-gradient">Add Task</a>
+    <a href="/viewTasks" class="button-padded-gradient">Manage Tasks</a>
+    <a href="/logout" class="button-padded-gradient">Logout</a>
+</div>
+
+<div class="main-content">
+    <h1>Add New Task</h1>
+    <form action="/addTask" method="post">
+        <label>Title:</label>
+        <input type="text" name="title" required>
+
+        <label>Description:</label>
+        <textarea name="description" required></textarea>
+
+        <label>Status:</label>
+        <select name="status" required>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+
+        <label>Deadline:</label>
+        <input type="date" name="deadline" required>
+
+        <button type="submit" class="button-padded-gradient">Add Task</button>
+    </form>
+</div>
+
+</body>
+</html>
