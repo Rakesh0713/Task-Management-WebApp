@@ -3,10 +3,10 @@ package com.task.taskManagement.controller;
 import java.util.List;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import com.task.taskManagement.model.User;
 import com.task.taskManagement.repository.UserRepository;
 
@@ -15,6 +15,9 @@ public class UserController {
 
     @Autowired
     UserRepository urepo;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @RequestMapping("/")
     public String home() {
@@ -30,6 +33,8 @@ public class UserController {
             modelMap.addAttribute("showSignIn", false); // Stay on sign-up
             return "home";
         } else {
+            // Hash the password before saving
+            user.setUser_pass(passwordEncoder.encode(user.getUser_pass()));
             urepo.save(user);
             modelMap.addAttribute("message", "User registered successfully.");
             modelMap.addAttribute("showSignIn", true); // Switch to login form
@@ -42,8 +47,8 @@ public class UserController {
                              @RequestParam("password") String password,
                              HttpSession session,
                              ModelMap modelMap) {
-        User auser = urepo.findByUsernamePassword(email, password);
-        if (auser != null) {
+        List<User> users = urepo.findByEMAIL(email);
+        if (!users.isEmpty() && passwordEncoder.matches(password, users.get(0).getUser_pass())) {
             session.setAttribute("username", email);
             return "add";  // Redirect to dashboard or task add page
         } else {

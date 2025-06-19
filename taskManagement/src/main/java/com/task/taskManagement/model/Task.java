@@ -16,6 +16,13 @@ public class Task {
     private String userEmail;
     private LocalDate deadline;
 
+    public enum Priority {
+        LOW, MEDIUM, HIGH
+    }
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+
     // Getters and Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -34,4 +41,7 @@ public class Task {
 
     public LocalDate getDeadline() { return deadline; }
     public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+
+    public Priority getPriority() { return priority; }
+    public void setPriority(Priority priority) { this.priority = priority; }
 }

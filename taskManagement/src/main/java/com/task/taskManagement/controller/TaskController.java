@@ -1,11 +1,13 @@
 package com.task.taskManagement.controller;
 
 import com.task.taskManagement.model.Task;
+import com.task.taskManagement.model.Task.Priority;
 import com.task.taskManagement.repository.TaskRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,9 @@ public class TaskController {
     }
 
     @PostMapping("/addTask")
-    public String addTask(@ModelAttribute Task task, HttpSession session) {
+    public String addTask(@ModelAttribute Task task, @RequestParam("priority") String priority, HttpSession session) {
         task.setUserEmail((String) session.getAttribute("username"));
+        task.setPriority(Priority.valueOf(priority));
         taskRepo.save(task);
         return "redirect:/dashboard";
     }
@@ -53,7 +56,7 @@ public class TaskController {
         String userEmail = (String) session.getAttribute("username");
         List<Task> tasks = taskRepo.findByUserEmail(userEmail);
         model.addAttribute("tasks", tasks);
-        return "tasklist";
+        return "taskList";
     }
 
     // 👇 These routes are specifically for operations done in tasklist.html
