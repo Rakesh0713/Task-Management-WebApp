@@ -5,83 +5,64 @@ import com.task.taskManagement.model.Task.Priority;
 import com.task.taskManagement.repository.TaskRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-@Controller
+@RestController
+@RequestMapping("/api/task")
 public class TaskController {
 
     @Autowired
     private TaskRepository taskRepo;
 
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
+    @GetMapping("/list")
+    public List<Task> getTasks(HttpSession session) {
         String userEmail = (String) session.getAttribute("username");
-        List<Task> tasks = taskRepo.findByUserEmail(userEmail);
-        model.addAttribute("tasks", tasks);
-        model.addAttribute("task", new Task());
-        return "add";
+        return taskRepo.findByUserEmail(userEmail);
     }
 
-    @PostMapping("/addTask")
-    public String addTask(@ModelAttribute Task task, @RequestParam("priority") String priority, HttpSession session) {
+    @PostMapping("/add")
+    public Map<String, Object> addTask(@RequestBody Task task, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
         task.setUserEmail((String) session.getAttribute("username"));
-        task.setPriority(Priority.valueOf(priority));
         taskRepo.save(task);
-        return "redirect:/dashboard";
+        response.put("success", true);
+        response.put("message", "Task added successfully.");
+        return response;
     }
 
-    @PostMapping("/updateTask")
-    public String updateTask(@RequestParam Integer id, @RequestParam String status) {
+    @PutMapping("/update/{id}")
+    public Map<String, Object> updateTask(@PathVariable Integer id, @RequestBody Map<String, String> updates) {
+        Map<String, Object> response = new HashMap<>();
         Task task = taskRepo.findById(id).orElse(null);
         if (task != null) {
-            task.setStatus(status);
+            if (updates.containsKey("status")) task.setStatus(updates.get("status"));
+            if (updates.containsKey("title")) task.setTitle(updates.get("title"));
+            if (updates.containsKey("description")) task.setDescription(updates.get("description"));
+            if (updates.containsKey("priority")) task.setPriority(Priority.valueOf(updates.get("priority").toUpperCase()));
             taskRepo.save(task);
+            response.put("success", true);
+            response.put("message", "Task updated successfully.");
+        } else {
+            response.put("success", false);
+            response.put("error", "Task not found.");
         }
-        return "redirect:/dashboard";
+        return response;
     }
 
-    @GetMapping("/deleteTask/{id}")
-    public String deleteTask(@PathVariable Integer id) {
-        taskRepo.deleteById(id);
-        return "redirect:/dashboard";
-    }
-
-    @GetMapping("/viewTasks")
-    public String viewTasks(HttpSession session, Model model) {
-        String userEmail = (String) session.getAttribute("username");
-        List<Task> tasks = taskRepo.findByUserEmail(userEmail);
-        model.addAttribute("tasks", tasks);
-        return "taskList";
-    }
-
-    // 👇 These routes are specifically for operations done in tasklist.html
-    @PostMapping("/updateTaskFromList")
-    public String updateTaskFromList(@RequestParam Integer id, @RequestParam String status) {
-        Task task = taskRepo.findById(id).orElse(null);
-        if (task != null) {
-            task.setStatus(status);
-            taskRepo.save(task);
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Object> deleteTask(@PathVariable Integer id) {
+        Map<String, Object> response = new HashMap<>();
+        if (taskRepo.existsById(id)) {
+            taskRepo.deleteById(id);
+            response.put("success", true);
+            response.put("message", "Task deleted successfully.");
+        } else {
+            response.put("success", false);
+            response.put("error", "Task not found.");
         }
-        return "redirect:/viewTasks";
-    }
-
-    @GetMapping("/addTaskPage")
-    public String showAddTaskPage(HttpSession session, Model model) {
-        String userEmail = (String) session.getAttribute("username");
-        List<Task> tasks = taskRepo.findByUserEmail(userEmail);
-        model.addAttribute("tasks", tasks);
-        model.addAttribute("task", new Task());
-        return "add";
-    }
-
-    @GetMapping("/deleteTaskFromList/{id}")
-    public String deleteTaskFromList(@PathVariable Integer id) {
-        taskRepo.deleteById(id);
-        return "redirect:/viewTasks";
+        return response;
     }
 }
