@@ -1,453 +1,584 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>TaskFlow</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-        body {
-            margin: 0;
-            background-color: #f9f9fc;
-            color: #102030;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 32px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .header h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-        .header-buttons {
-            display: flex;
-            gap: 16px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-login {
-            background-color: #fff;
-            border: 1px solid #102030;
-        }
-        .btn-add {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 24px;
-            gap: 16px;
-        }
-        .stat-box {
-            flex: 1;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .stat-box h2 {
-            margin: 0;
-            font-size: 28px;
-        }
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .filter-btn {
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 2px solid transparent;
-            cursor: pointer;
-        }
-        .filter-active {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-        }
-        .tasks-container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .task-card {
-            background-color: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .task-info h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .task-info p {
-            margin: 4px 0;
-            color: #666;
-        }
-        .priority-tag {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .low { background-color: #d4f9e4; color: #059669; }
-        .medium { background-color: #fef3c7; color: #b45309; }
-        .high { background-color: #fee2e2; color: #b91c1c; }
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 400px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .modal-content h2 {
-            margin-top: 0;
-        }
-        .modal-content input, .modal-content textarea, .modal-content select {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-        .modal-content .btn {
-            width: 100%;
-            margin-top: 10px;
-        }
-        .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #888;
-        }
-        .show { display: flex !important; }
-        .completed h3 {
-            text-decoration: line-through;
-            color: #aaa;
-        }
-        .auth-section-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-            justify-content: center;
-            align-items: center;
-            z-index: 1001;
-        }
-        .auth-modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 400px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .auth-modal-content .auth-tabs {
-            margin-bottom: 20px;
-        }
-        .auth-modal-content .auth-form input {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-        .auth-modal-content .auth-form button {
-            width: 100%;
-            margin-top: 10px;
-            background: #30e3ca;
-            color: #000;
-        }
-        .auth-modal-content .auth-form {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .auth-modal-content .auth-show {
-            display: flex !important;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>TaskFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(120deg, #f9f9fc 60%, #f7f6ff 100%);
+      color: #102030;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 40px 16px 40px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1::before {
+      content: '\2714';
+      display: inline-block;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      padding: 8px 12px;
+      margin-right: 8px;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 16px;
+    }
+    .btn {
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+    .btn-login {
+      background: #fff;
+      border: 1.5px solid #102030;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-login::before {
+      content: '\21B3';
+      font-size: 1.1em;
+    }
+    .btn-add {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-add::before {
+      content: '+';
+      font-size: 1.2em;
+    }
+    .main {
+      display: flex;
+      gap: 40px;
+      max-width: 1400px;
+      margin: 32px auto 0 auto;
+      padding: 0 40px;
+    }
+    .overview {
+      flex: 0 0 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 1.1rem;
+    }
+    .stat-icon {
+      font-size: 2.1rem;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-tasks { background: #eef2ff; color: #6366f1; }
+    .stat-completed { background: #e6f9ed; color: #059669; }
+    .stat-pending { background: #fff7ed; color: #f59e42; }
+    .stat-rate { background: #f3e8ff; color: #a21caf; }
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-info p {
+      margin: 0;
+      font-size: 1.05rem;
+      color: #6b7280;
+    }
+    .stat-info h2 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #222;
+    }
+    .tasks-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .tasks-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .tasks-header h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+    .filter-btn {
+      padding: 8px 24px;
+      border-radius: 20px;
+      border: 2px solid #e5e7eb;
+      background: #fff;
+      color: #222;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.2s;
+      position: relative;
+    }
+    .filter-btn.filter-active {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      border: none;
+    }
+    .filter-btn .filter-count {
+      background: #fff;
+      color: #6a11cb;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.95em;
+      margin-left: 8px;
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(106,17,203,0.08);
+    }
+    .tasks-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 0;
+    }
+    .task-card {
+      background-color: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: background 0.3s, box-shadow 0.3s;
+      border: 1.5px solid #f3f4f6;
+    }
+    .task-card:hover {
+      box-shadow: 0 8px 24px rgba(106,17,203,0.15), 0 2px 8px rgba(0,0,0,0.08);
+      background: #f6f8ff;
+      border-color: #e0e7ff;
+    }
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex: 1;
+    }
+    .task-card input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #6a11cb;
+      margin-right: 8px;
+    }
+    .task-info h3 {
+      margin: 0 0 2px 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .task-info p {
+      margin: 0;
+      color: #666;
+      font-size: 1rem;
+    }
+    .completed .task-info h3,
+    .completed .task-info p {
+      color: #a0a0a0;
+      text-decoration: line-through;
+    }
+    .priority-tag {
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .priority-tag.high { background-color: #fee2e2; color: #b91c1c; }
+    .priority-tag.low { background-color: #d4f9e4; color: #059669; }
+    .priority-tag.medium { background-color: #fef3c7; color: #b45309; }
+    .priority-tag.high::before { content: '\2B50'; font-size: 1.1em; }
+    .priority-tag.low::before { content: '\25CB'; font-size: 1.1em; }
+    .priority-tag.medium::before { content: '\23F3'; font-size: 1.1em; }
+    .task-card button {
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #b91c1c;
+      margin-left: 8px;
+      transition: color 0.2s;
+    }
+    .task-card button:hover {
+      color: #7f1d1d;
+    }
+    .modal, .auth-section-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content, .auth-modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 400px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .modal-content h2, .auth-modal-content h2 {
+      margin-top: 0;
+    }
+    .modal-content input, .modal-content textarea, .modal-content select,
+    .auth-modal-content input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .modal-content .btn, .auth-modal-content .btn {
+      width: 100%;
+      margin-top: 10px;
+      background: #30e3ca;
+      color: #000;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #888;
+    }
+    .show { display: flex !important; }
+    .auth-modal-content .auth-tabs {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 8px;
+    }
+    .auth-modal-content .auth-tabs button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      background: #eee;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .auth-modal-content .auth-tabs .active {
+      background: #30e3ca;
+      color: black;
+    }
+    .auth-modal-content .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .auth-modal-content .auth-show {
+      display: flex !important;
+    }
+    @media (max-width: 1100px) {
+      .main { flex-direction: column; gap: 0; }
+      .overview { flex-direction: row; gap: 16px; justify-content: space-between; }
+      .stat-card { flex: 1; }
+      .tasks-section { margin-top: 32px; }
+    }
+    @media (max-width: 700px) {
+      .header, .main { padding: 0 10px; }
+      .main { flex-direction: column; gap: 0; }
+      .overview { flex-direction: column; gap: 12px; }
+      .stat-card { padding: 18px 10px; }
+      .tasks-section { margin-top: 24px; }
+    }
+  </style>
 </head>
 <body>
-
 <div class="header">
-    <h1>TaskFlow</h1>
-    <div class="header-buttons">
-        <button class="btn btn-login" onclick="showAuthModal()">Login</button>
-        <button class="btn btn-add" onclick="showModal()">+ Add Task</button>
-    </div>
+  <h1>TaskFlow</h1>
+  <div class="header-buttons" id="headerButtons"></div>
 </div>
-
-<div class="stats">
-    <div class="stat-box">
-        <p>Total Tasks</p><h2 id="totalTasks">0</h2>
+<div class="main">
+  <div class="overview">
+    <div class="stat-card"><span class="stat-icon stat-tasks">🎯</span><div class="stat-info"><p>Total Tasks</p><h2 id="totalTasks">0</h2></div></div>
+    <div class="stat-card"><span class="stat-icon stat-completed">✅</span><div class="stat-info"><p>Completed</p><h2 id="completedTasks">0</h2></div></div>
+    <div class="stat-card"><span class="stat-icon stat-pending">⏰</span><div class="stat-info"><p>Pending</p><h2 id="pendingTasks">0</h2></div></div>
+    <div class="stat-card"><span class="stat-icon stat-rate">📈</span><div class="stat-info"><p>Completion Rate</p><h2 id="completionRate">0%</h2></div></div>
+  </div>
+  <div class="tasks-section">
+    <div class="tasks-header">
+      <h2>Tasks</h2>
+      <div class="filters">
+        <button class="filter-btn filter-active" onclick="filterTasks('all', event)">All Tasks <span class="filter-count" id="allCount">0</span></button>
+        <button class="filter-btn" onclick="filterTasks('Pending', event)">Pending <span class="filter-count" id="pendingCount">0</span></button>
+        <button class="filter-btn" onclick="filterTasks('Completed', event)">Completed <span class="filter-count" id="completedCount">0</span></button>
+      </div>
     </div>
-    <div class="stat-box">
-        <p>Completed</p><h2 id="completedTasks">0</h2>
-    </div>
-    <div class="stat-box">
-        <p>Pending</p><h2 id="pendingTasks">0</h2>
-    </div>
-    <div class="stat-box">
-        <p>Completion Rate</p><h2 id="completionRate">0%</h2>
-    </div>
+    <div class="tasks-container" id="tasksList"></div>
+  </div>
 </div>
-
-<div class="filters">
-    <button class="filter-btn filter-active" onclick="filterTasks('all', event)">All Tasks</button>
-    <button class="filter-btn" onclick="filterTasks('Pending', event)">Pending</button>
-    <button class="filter-btn" onclick="filterTasks('Completed', event)">Completed</button>
-</div>
-
-<div class="tasks-container" id="tasksList">
-    <!-- Dynamic Tasks will be inserted here -->
-</div>
-
 <div class="modal" id="taskModal">
-    <div class="modal-content">
-        <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
-        <h2>Add New Task</h2>
-        <input type="text" placeholder="Task Title" id="taskTitle">
-        <textarea placeholder="Description" id="taskDesc"></textarea>
-        <select id="taskPriority">
-            <option value="LOW">Low Priority</option>
-            <option value="MEDIUM">Medium Priority</option>
-            <option value="HIGH">High Priority</option>
-        </select>
-        <input type="date" id="taskDeadline">
-        <button class="btn btn-add" onclick="addTask()">+ Add Task</button>
-    </div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+    <h2>Add New Task</h2>
+    <input type="text" placeholder="Task Title" id="taskTitle">
+    <textarea placeholder="Description" id="taskDesc"></textarea>
+    <select id="taskPriority">
+      <option value="LOW">Low Priority</option>
+      <option value="MEDIUM">Medium Priority</option>
+      <option value="HIGH">High Priority</option>
+    </select>
+    <input type="date" id="taskDeadline">
+    <button class="btn btn-add" onclick="addTask()">+ Add Task</button>
+  </div>
 </div>
-
 <div class="auth-section-modal" id="authModal">
-    <div class="auth-modal-content">
-        <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
-        <div class="auth-tabs">
-            <button id="regTab" class="active" onclick="showAuthForm('register')">Register</button>
-            <button id="loginTab" onclick="showAuthForm('login')">Login</button>
-        </div>
-        <form class="auth-form auth-show" id="registerForm" onsubmit="register(event)">
-            <input type="text" placeholder="Full Name" id="regName" required>
-            <input type="email" placeholder="Email" id="regEmail" required>
-            <input type="password" placeholder="Password" id="regPassword" required>
-            <button class="btn">Register</button>
-        </form>
-        <form class="auth-form" id="loginForm" onsubmit="login(event)">
-            <input type="email" placeholder="Email" id="loginEmail" required>
-            <input type="password" placeholder="Password" id="loginPassword" required>
-            <button class="btn">Login</button>
-        </form>
+  <div class="auth-modal-content">
+    <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+    <div class="auth-tabs">
+      <button id="regTab" class="active" onclick="showAuthForm('register')">Register</button>
+      <button id="loginTab" onclick="showAuthForm('login')">Login</button>
     </div>
+    <form class="auth-form auth-show" id="registerForm" onsubmit="register(event)">
+      <input type="text" placeholder="Full Name" id="regName" required>
+      <input type="email" placeholder="Email" id="regEmail" required>
+      <input type="password" placeholder="Password" id="regPassword" required>
+      <button class="btn">Register</button>
+    </form>
+    <form class="auth-form" id="loginForm" onsubmit="login(event)">
+      <input type="email" placeholder="Email" id="loginEmail" required>
+      <input type="password" placeholder="Password" id="loginPassword" required>
+      <button class="btn">Login</button>
+    </form>
+  </div>
 </div>
-
 <script>
-    let tasks = [];
-    let currentFilter = 'all';
-    let isLoggedIn = false;
-
-    async function fetchTasks() {
-        const res = await fetch('/api/task/list');
-        if (res.ok) {
-            tasks = await res.json();
-            renderTasks(currentFilter);
-        } else {
-            tasks = [];
-            renderTasks(currentFilter);
-        }
-    }
-
-    function renderTasks(filter = "all") {
-        const container = document.getElementById("tasksList");
-        container.innerHTML = "";
-        const filtered = tasks.filter(t =>
-            filter === "all" || t.status === filter
-        );
-        filtered.forEach(task => {
-            const div = document.createElement("div");
-            div.className = `task-card ${task.status}`;
-            div.innerHTML = `
-                <div class="task-info">
-                    <h3>${task.title}</h3>
-                    <p>${task.description}</p>
-                    <p>${task.deadline || ''}</p>
-                </div>
-                <div>
-                    <span class="priority-tag ${task.priority.toLowerCase()}">${task.priority.charAt(0) + task.priority.slice(1).toLowerCase()}</span>
-                    <input type="radio" name="complete-${task.id}" ${task.status === 'Completed' ? 'checked' : ''} onclick="markCompleted(${task.id}, this.checked)" title="Mark as completed" />
-                    <button onclick="deleteTask(${task.id})" style="margin-left:10px;">🗑️</button>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-        document.getElementById("totalTasks").innerText = tasks.length;
-        const completed = tasks.filter(t => t.status === "Completed").length;
-        const pending = tasks.filter(t => t.status !== "Completed").length;
-        document.getElementById("completedTasks").innerText = completed;
-        document.getElementById("pendingTasks").innerText = pending;
-        document.getElementById("completionRate").innerText = tasks.length ? Math.round((completed / tasks.length) * 100) + "%" : "0%";
-    }
-
-    function showModal() {
-        if (!isLoggedIn) { showAuthModal(); return; }
-        document.getElementById("taskModal").classList.add("show");
-    }
-
-    function showAuthModal() {
-        document.getElementById("authModal").classList.add("show");
-    }
-
-    function closeModal(id) {
-        document.getElementById(id).classList.remove("show");
-    }
-
-    async function addTask() {
-        const title = document.getElementById("taskTitle").value;
-        const description = document.getElementById("taskDesc").value;
-        const priority = document.getElementById("taskPriority").value;
-        const deadline = document.getElementById("taskDeadline").value;
-        const res = await fetch('/api/task/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, description, priority, deadline, status: 'Pending' })
-        });
-        if (res.ok) {
-            closeModal('taskModal');
-            await fetchTasks();
-        } else {
-            alert('Failed to add task');
-        }
-    }
-
-    async function deleteTask(id) {
-        const res = await fetch(`/api/task/delete/${id}`, { method: 'DELETE' });
-        if (res.ok) {
-            await fetchTasks();
-        } else {
-            alert('Failed to delete task');
-        }
-    }
-
-    async function markCompleted(id, checked) {
-        const status = checked ? 'Completed' : 'Pending';
-        const res = await fetch(`/api/task/update/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status })
-        });
-        if (res.ok) {
-            await fetchTasks();
-        } else {
-            alert('Failed to update task');
-        }
-    }
-
-    function filterTasks(type, event) {
-        currentFilter = type;
-        document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("filter-active"));
-        if (event) event.target.classList.add("filter-active");
-        renderTasks(type);
-    }
-
-    function showAuthForm(type) {
-        document.getElementById("registerForm").classList.remove("auth-show");
-        document.getElementById("loginForm").classList.remove("auth-show");
-        document.getElementById("regTab").classList.remove("active");
-        document.getElementById("loginTab").classList.remove("active");
-        if (type === "register") {
-            document.getElementById("registerForm").classList.add("auth-show");
-            document.getElementById("regTab").classList.add("active");
-        } else {
-            document.getElementById("loginForm").classList.add("auth-show");
-            document.getElementById("loginTab").classList.add("active");
-        }
-    }
-
-    async function register(e) {
-        e.preventDefault();
-        const user_fname = document.getElementById("regName").value;
-        const user_email = document.getElementById("regEmail").value;
-        const user_pass = document.getElementById("regPassword").value;
-        const res = await fetch('/api/user/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_fname, user_email, user_pass })
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert('Registration successful! Please login.');
-            showAuthForm('login');
-        } else {
-            alert(data.error || 'Registration failed');
-        }
-    }
-
-    async function login(e) {
-        e.preventDefault();
-        const email = document.getElementById("loginEmail").value;
-        const password = document.getElementById("loginPassword").value;
-        const res = await fetch('/api/user/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-            isLoggedIn = true;
-            closeModal('authModal');
-            await fetchTasks();
-        } else {
-            alert(data.error || 'Login failed');
-        }
-    }
-
-    async function logout() {
-        const res = await fetch('/api/user/logout', { method: 'POST' });
-        if (res.ok) {
-            isLoggedIn = false;
-            tasks = [];
-            renderTasks();
-            showAuthModal();
-        }
-    }
-
-    // Attach logout to header button if needed
-    document.querySelector('.btn-login').addEventListener('dblclick', logout);
-
-    // On load, try to fetch tasks (if session is valid)
-    fetchTasks();
+let tasks = [];
+let currentFilter = 'all';
+let isLoggedIn = false;
+async function fetchTasks() {
+  const res = await fetch('/api/task/list');
+  if (res.ok) {
+    tasks = await res.json();
+    renderTasks(currentFilter);
+  } else {
+    tasks = [];
+    renderTasks(currentFilter);
+  }
+}
+function renderHeaderButtons() {
+  const btns = document.getElementById('headerButtons');
+  btns.innerHTML = '';
+  if (isLoggedIn) {
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'btn btn-logout';
+    logoutBtn.innerText = 'Logout';
+    logoutBtn.onclick = logout;
+    btns.appendChild(logoutBtn);
+  } else {
+    const loginBtn = document.createElement('button');
+    loginBtn.className = 'btn btn-login';
+    loginBtn.innerText = 'Login';
+    loginBtn.onclick = showAuthModal;
+    btns.appendChild(loginBtn);
+  }
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn btn-add';
+  addBtn.innerText = 'Add Task';
+  addBtn.onclick = showModal;
+  btns.appendChild(addBtn);
+}
+function renderTasks(filter = "all") {
+  const container = document.getElementById("tasksList");
+  container.innerHTML = "";
+  const filtered = tasks.filter(t => filter === "all" || t.status === filter);
+  filtered.forEach(task => {
+    const div = document.createElement("div");
+    div.className = `task-card ${task.status === 'Completed' ? 'completed' : ''}`;
+    div.innerHTML = `
+      <div class="task-left">
+        <input type="checkbox" ${task.status === 'Completed' ? 'checked' : ''} onclick="markCompleted(${task.id}, this.checked)">
+        <div class="task-info">
+          <h3>${task.title}</h3>
+          <p>${task.description}</p>
+          <p>${task.deadline || ''}</p>
+        </div>
+      </div>
+      <div>
+        <span class="priority-tag ${task.priority.toLowerCase()}">${task.priority.charAt(0) + task.priority.slice(1).toLowerCase()}</span>
+        <button onclick="deleteTask(${task.id})" style="margin-left:10px;">🗑️</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  document.getElementById("totalTasks").innerText = tasks.length;
+  const completed = tasks.filter(t => t.status === "Completed").length;
+  const pending = tasks.length - completed;
+  document.getElementById("completedTasks").innerText = completed;
+  document.getElementById("pendingTasks").innerText = pending;
+  document.getElementById("completionRate").innerText = tasks.length ? Math.round((completed / tasks.length) * 100) + "%" : "0%";
+  document.getElementById("allCount").innerText = tasks.length;
+  document.getElementById("pendingCount").innerText = pending;
+  document.getElementById("completedCount").innerText = completed;
+  renderHeaderButtons();
+}
+function showModal() {
+  if (!isLoggedIn) { showAuthModal(); return; }
+  document.getElementById("taskModal").classList.add("show");
+}
+function showAuthModal() {
+  document.getElementById("authModal").classList.add("show");
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove("show");
+}
+async function addTask() {
+  const title = document.getElementById("taskTitle").value;
+  const description = document.getElementById("taskDesc").value;
+  const priority = document.getElementById("taskPriority").value;
+  const deadline = document.getElementById("taskDeadline").value;
+  const res = await fetch('/api/task/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description, priority, deadline, status: 'Pending' })
+  });
+  if (res.ok) {
+    closeModal('taskModal');
+    await fetchTasks();
+  } else {
+    alert('Failed to add task');
+  }
+}
+async function deleteTask(id) {
+  const res = await fetch(`/api/task/delete/${id}`, { method: 'DELETE' });
+  if (res.ok) await fetchTasks();
+  else alert('Failed to delete task');
+}
+async function markCompleted(id, checked) {
+  const status = checked ? 'Completed' : 'Pending';
+  const res = await fetch(`/api/task/update/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status })
+  });
+  if (res.ok) await fetchTasks();
+  else alert('Failed to update task');
+}
+function filterTasks(type, event) {
+  currentFilter = type;
+  document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("filter-active"));
+  if (event) event.target.classList.add("filter-active");
+  renderTasks(type);
+}
+function showAuthForm(type) {
+  document.getElementById("registerForm").classList.remove("auth-show");
+  document.getElementById("loginForm").classList.remove("auth-show");
+  document.getElementById("regTab").classList.remove("active");
+  document.getElementById("loginTab").classList.remove("active");
+  if (type === "register") {
+    document.getElementById("registerForm").classList.add("auth-show");
+    document.getElementById("regTab").classList.add("active");
+  } else {
+    document.getElementById("loginForm").classList.add("auth-show");
+    document.getElementById("loginTab").classList.add("active");
+  }
+}
+async function register(e) {
+  e.preventDefault();
+  const user_fname = document.getElementById("regName").value;
+  const user_email = document.getElementById("regEmail").value;
+  const user_pass = document.getElementById("regPassword").value;
+  const res = await fetch('/api/user/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_fname, user_email, user_pass })
+  });
+  const data = await res.json();
+  if (data.success) {
+    alert('Registration successful! Please login.');
+    showAuthForm('login');
+  } else {
+    alert(data.error || 'Registration failed');
+  }
+}
+async function login(e) {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const res = await fetch('/api/user/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if (data.success) {
+    isLoggedIn = true;
+    closeModal('authModal');
+    await fetchTasks();
+    renderHeaderButtons();
+  } else {
+    alert(data.error || 'Login failed');
+  }
+}
+async function logout() {
+  const res = await fetch('/api/user/logout', { method: 'POST' });
+  if (res.ok) {
+    isLoggedIn = false;
+    tasks = [];
+    renderTasks();
+    showAuthModal();
+    renderHeaderButtons();
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  renderHeaderButtons();
+  fetchTasks();
+});
 </script>
-
 </body>
 </html>
