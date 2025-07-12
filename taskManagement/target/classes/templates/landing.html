@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Welcome</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            background: radial-gradient(ellipse at top left, #1a2332 60%, #101624 100%);
+            color: #cfd8dc;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px 0 20px;
+        }
+        .title {
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: -2px;
+        }
+        .title .accent {
+            color: #19c37d;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #90a4ae;
+            margin-bottom: 3rem;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .feature {
+            background: rgba(30,40,60,0.7);
+            border-radius: 1rem;
+            padding: 1.5rem 2rem;
+            min-width: 220px;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.12);
+            border: 1px solid #22304a;
+        }
+        .feature h3 {
+            color: #19c37d;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        .feature p {
+            color: #b0bec5;
+            margin: 0;
+            font-size: 1rem;
+        }
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        .auth-card {
+            background: rgba(20,30,40,0.85);
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,0.18);
+            border: 1.5px solid #19c37d33;
+            width: 400px;
+            min-height: 350px;
+            padding: 2.5rem 2rem 2rem 2rem;
+            position: relative;
+            transition: box-shadow 0.3s, border 0.3s;
+        }
+        .auth-card.active {
+            box-shadow: 0 4px 32px 0 #19c37d44;
+            border: 2px solid #19c37d;
+        }
+        .auth-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .auth-title .icon {
+            color: #19c37d;
+            font-size: 2rem;
+        }
+        .auth-desc {
+            color: #90a4ae;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 1.1rem;
+            margin-top: 1rem;
+        }
+        .auth-card.morph .auth-form {
+            display: flex;
+            animation: morphIn 0.5s cubic-bezier(.4,2,.6,1) forwards;
+        }
+        .auth-card.morph .auth-desc, .auth-card.morph .auth-switch {
+            display: none;
+        }
+        @keyframes morphIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .input-label {
+            color: #b0bec5;
+            font-size: 1rem;
+        }
+        .input-field {
+            background: #16202e;
+            border: 1.5px solid #22304a;
+            border-radius: 0.5rem;
+            padding: 0.8rem 1rem;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .input-field:focus {
+            border: 1.5px solid #19c37d;
+        }
+        .auth-btn {
+            background: #19c37d;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.9rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .auth-btn:hover {
+            background: #13a06b;
+        }
+        .auth-switch {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        .auth-switch-btn {
+            background: none;
+            border: 1.5px solid #19c37d;
+            color: #19c37d;
+            border-radius: 0.4rem;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .auth-switch-btn:hover {
+            background: #19c37d;
+            color: #fff;
+        }
+        @media (max-width: 950px) {
+            .features { flex-direction: column; align-items: center; }
+            .auth-section { flex-direction: column; align-items: center; gap: 2rem; }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px 5px 0 5px; }
+            .title { font-size: 2.2rem; }
+            .subtitle { font-size: 1rem; }
+            .auth-card { width: 95vw; min-width: unset; padding: 1.2rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Welcome to <span class="accent">TaskFlow</span></div>
+        <div class="subtitle">
+            Streamline your productivity with our intuitive task management solution.<br>
+            Organize, prioritize, and accomplish your goals with ease.
+        </div>
+        <div class="features">
+            <div class="feature">
+                <h3>🗂️ Organize Tasks</h3>
+                <p>Group, prioritize, and manage all your tasks in one place.</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Track Progress</h3>
+                <p>Visualize your productivity and stay on top of deadlines.</p>
+            </div>
+            <div class="feature">
+                <h3>🔒 Secure & Simple</h3>
+                <p>Your data is safe, and the interface is easy to use.</p>
+            </div>
+        </div>
+        <div class="auth-section">
+            <!-- Sign In Card -->
+            <div class="auth-card" id="signInCard">
+                <div class="auth-title"><span class="icon">👤</span> Sign In</div>
+                <div class="auth-desc">Welcome back! Enter your credentials to continue.</div>
+                <form class="auth-form" id="signInForm">
+                    <div class="input-group">
+                        <label class="input-label" for="signin-email">Email</label>
+                        <input class="input-field" type="email" id="signin-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="signin-password">Password</label>
+                        <input class="input-field" type="password" id="signin-password" placeholder="Enter your password" required>
+                    </div>
+                    <button class="auth-btn" type="submit">Sign In</button>
+                </form>
+                <div class="auth-switch">Need an account?<br>
+                    <button class="auth-switch-btn" onclick="morphTo('signUp')">Switch to Create Account</button>
+                </div>
+            </div>
+            <!-- Sign Up Card -->
+            <div class="auth-card" id="signUpCard">
+                <div class="auth-title"><span class="icon">👤</span> Create Account</div>
+                <div class="auth-desc">Join TaskFlow and start organizing your tasks today.</div>
+                <form class="auth-form" id="signUpForm">
+                    <div class="input-group">
+                        <label class="input-label" for="signup-name">Full Name</label>
+                        <input class="input-field" type="text" id="signup-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="signup-email">Email</label>
+                        <input class="input-field" type="email" id="signup-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="signup-password">Password</label>
+                        <input class="input-field" type="password" id="signup-password" placeholder="Create a password" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="signup-confirm">Confirm Password</label>
+                        <input class="input-field" type="password" id="signup-confirm" placeholder="Confirm your password" required>
+                    </div>
+                    <button class="auth-btn" type="submit">Create Account</button>
+                </form>
+                <div class="auth-switch">Already have an account?<br>
+                    <button class="auth-switch-btn" onclick="morphTo('signIn')">Switch to Sign In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Initial state: show both cards, no morph
+        const signInCard = document.getElementById('signInCard');
+        const signUpCard = document.getElementById('signUpCard');
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+        function morphTo(type) {
+            if (type === 'signIn') {
+                signUpCard.classList.remove('morph', 'active');
+                signInCard.classList.add('morph', 'active');
+            } else {
+                signInCard.classList.remove('morph', 'active');
+                signUpCard.classList.add('morph', 'active');
+            }
+        }
+        // Start with sign in morph
+        morphTo('signIn');
+        // Connect Sign In form to backend
+        signInForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            const response = await fetch('/api/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = '/dashboard';
+            } else {
+                alert(data.error || 'Login failed');
+            }
+        };
+        // Connect Sign Up form to backend
+        signUpForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+            const response = await fetch('/api/user/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_name: name, user_email: email, user_pass: password })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('Account created! Please sign in.');
+                morphTo('signIn');
+            } else {
+                alert(data.error || 'Sign up failed');
+            }
+        };
+    </script>
+</body>
+</html> 
