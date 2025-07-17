@@ -70,14 +70,91 @@
             box-shadow: 0 2px 24px 0 rgba(0,0,0,0.18);
             border: 1.5px solid #19c37d33;
             width: 400px;
-            min-height: 350px;
+            min-height: 120px;
             padding: 2.5rem 2rem 2rem 2rem;
             position: relative;
-            transition: box-shadow 0.3s, border 0.3s;
+            transition: box-shadow 0.3s, border 0.3s, min-height 0.5s cubic-bezier(.4,2,.6,1), padding 0.5s cubic-bezier(.4,2,.6,1);
+            overflow: hidden;
         }
-        .auth-card.active {
+        /* Independent expansion for Sign In */
+        #signInCard.expanded {
+            min-height: 350px;
             box-shadow: 0 4px 32px 0 #19c37d44;
             border: 2px solid #19c37d;
+            padding-bottom: 2rem;
+            padding-top: 2.5rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            transition: min-height 0.5s cubic-bezier(.4,2,.6,1), box-shadow 0.3s, border 0.3s, padding 0.5s cubic-bezier(.4,2,.6,1);
+        }
+        #signInCard.collapsed {
+            min-height: 120px;
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,0.18);
+            border: 1.5px solid #19c37d33;
+            padding-bottom: 2rem;
+            padding-top: 2.5rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            transition: min-height 0.5s cubic-bezier(.4,2,.6,1), box-shadow 0.3s, border 0.3s, padding 0.5s cubic-bezier(.4,2,.6,1);
+        }
+        #signInCard.expanded .auth-form {
+            display: flex;
+            opacity: 1;
+            max-height: 800px;
+            transition: opacity 0.4s, max-height 0.5s cubic-bezier(.4,2,.6,1);
+        }
+        #signInCard.expanded .trigger-btn,
+        #signInCard.expanded .auth-desc {
+            display: none;
+        }
+        #signInCard.collapsed .auth-form {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+        #signInCard.collapsed .trigger-btn,
+        #signInCard.collapsed .auth-desc {
+            display: block;
+        }
+        /* Independent expansion for Sign Up */
+        #signUpCard.expanded {
+            min-height: 420px;
+            box-shadow: 0 4px 32px 0 #19c37d99;
+            border: 2px solid #19c37d;
+            padding-bottom: 2.5rem;
+            padding-top: 2.5rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            transition: min-height 0.7s cubic-bezier(.6,1.5,.6,1), box-shadow 0.3s, border 0.3s, padding 0.5s cubic-bezier(.6,1.5,.6,1);
+        }
+        #signUpCard.collapsed {
+            min-height: 120px;
+            box-shadow: 0 2px 24px 0 rgba(0,0,0,0.18);
+            border: 1.5px solid #19c37d33;
+            padding-bottom: 2rem;
+            padding-top: 2.5rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            transition: min-height 0.7s cubic-bezier(.6,1.5,.6,1), box-shadow 0.3s, border 0.3s, padding 0.5s cubic-bezier(.6,1.5,.6,1);
+        }
+        #signUpCard.expanded .auth-form {
+            display: flex;
+            opacity: 1;
+            max-height: 1000px;
+            transition: opacity 0.5s, max-height 0.7s cubic-bezier(.6,1.5,.6,1);
+        }
+        #signUpCard.expanded .trigger-btn,
+        #signUpCard.expanded .auth-desc {
+            display: none;
+        }
+        #signUpCard.collapsed .auth-form {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+        }
+        #signUpCard.collapsed .trigger-btn,
+        #signUpCard.collapsed .auth-desc {
+            display: block;
         }
         .auth-title {
             display: flex;
@@ -204,9 +281,10 @@
         </div>
         <div class="auth-section">
             <!-- Sign In Card -->
-            <div class="auth-card" id="signInCard">
+            <div class="auth-card collapsed" id="signInCard">
                 <div class="auth-title"><span class="icon">👤</span> Sign In</div>
                 <div class="auth-desc">Welcome back! Enter your credentials to continue.</div>
+                <button class="auth-btn trigger-btn" id="openSignIn">Sign In</button>
                 <form class="auth-form" id="signInForm">
                     <div class="input-group">
                         <label class="input-label" for="signin-email">Email</label>
@@ -218,14 +296,12 @@
                     </div>
                     <button class="auth-btn" type="submit">Sign In</button>
                 </form>
-                <div class="auth-switch">Need an account?<br>
-                    <button class="auth-switch-btn" onclick="morphTo('signUp')">Switch to Create Account</button>
-                </div>
             </div>
             <!-- Sign Up Card -->
-            <div class="auth-card" id="signUpCard">
+            <div class="auth-card collapsed" id="signUpCard">
                 <div class="auth-title"><span class="icon">👤</span> Create Account</div>
                 <div class="auth-desc">Join TaskFlow and start organizing your tasks today.</div>
+                <button class="auth-btn trigger-btn" id="openSignUp">Sign Up</button>
                 <form class="auth-form" id="signUpForm">
                     <div class="input-group">
                         <label class="input-label" for="signup-name">Full Name</label>
@@ -245,29 +321,61 @@
                     </div>
                     <button class="auth-btn" type="submit">Create Account</button>
                 </form>
-                <div class="auth-switch">Already have an account?<br>
-                    <button class="auth-switch-btn" onclick="morphTo('signIn')">Switch to Sign In</button>
-                </div>
             </div>
         </div>
     </div>
     <script>
-        // Initial state: show both cards, no morph
+        // Card open/close logic
         const signInCard = document.getElementById('signInCard');
         const signUpCard = document.getElementById('signUpCard');
+        const openSignInBtn = document.getElementById('openSignIn');
+        const openSignUpBtn = document.getElementById('openSignUp');
         const signInForm = document.getElementById('signInForm');
         const signUpForm = document.getElementById('signUpForm');
-        function morphTo(type) {
-            if (type === 'signIn') {
-                signUpCard.classList.remove('morph', 'active');
-                signInCard.classList.add('morph', 'active');
-            } else {
-                signInCard.classList.remove('morph', 'active');
-                signUpCard.classList.add('morph', 'active');
+
+        function openCard(card) {
+            if (card === signInCard) {
+                signInCard.classList.add('expanded');
+                signInCard.classList.remove('collapsed');
+            } else if (card === signUpCard) {
+                signUpCard.classList.add('expanded');
+                signUpCard.classList.remove('collapsed');
             }
         }
-        // Start with sign in morph
-        morphTo('signIn');
+        function closeCards() {
+            signInCard.classList.remove('expanded');
+            signInCard.classList.add('collapsed');
+            signUpCard.classList.remove('expanded');
+            signUpCard.classList.add('collapsed');
+        }
+        openSignInBtn.onclick = function(e) {
+            e.stopPropagation();
+            signInCard.classList.add('expanded');
+            signInCard.classList.remove('collapsed');
+            signUpCard.classList.remove('expanded');
+            signUpCard.classList.add('collapsed');
+            // Force reflow for transition
+            void signUpCard.offsetWidth;
+        };
+        openSignUpBtn.onclick = function(e) {
+            e.stopPropagation();
+            signUpCard.classList.add('expanded');
+            signUpCard.classList.remove('collapsed');
+            signInCard.classList.remove('expanded');
+            signInCard.classList.add('collapsed');
+            // Force reflow for transition
+            void signInCard.offsetWidth;
+        };
+        // Prevent click inside card from closing
+        signInCard.onclick = function(e) { e.stopPropagation(); };
+        signUpCard.onclick = function(e) { e.stopPropagation(); };
+        // Click outside closes
+        document.body.onclick = function() {
+            closeCards();
+        };
+        // Prevent form submit from closing cards
+        signInForm.onclick = function(e) { e.stopPropagation(); };
+        signUpForm.onclick = function(e) { e.stopPropagation(); };
         // Connect Sign In form to backend
         signInForm.onsubmit = async function(e) {
             e.preventDefault();
@@ -304,11 +412,13 @@
             const data = await response.json();
             if (data.success) {
                 alert('Account created! Please sign in.');
-                morphTo('signIn');
+                closeCards();
             } else {
                 alert(data.error || 'Sign up failed');
             }
         };
+        // Start with both cards collapsed
+        closeCards();
     </script>
 </body>
 </html> 

@@ -560,14 +560,14 @@
         document.getElementById('addTaskForm').onsubmit = async function(e) {
             e.preventDefault();
             const title = document.getElementById('taskTitle').value.trim();
-            const desc = document.getElementById('taskDesc').value.trim();
-            const due = document.getElementById('taskDue').value;
+            const description = document.getElementById('taskDesc').value.trim();
+            const deadline = document.getElementById('taskDue').value;
             const priority = document.getElementById('taskPriority').value;
-            if (!title || !due) return;
+            if (!title || !deadline) return;
             const response = await fetch('/api/task/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, description: desc, dueDate: due, priority })
+                body: JSON.stringify({ title, description, deadline, priority })
             });
             if (response.ok) {
                 closeAddTaskModal();
