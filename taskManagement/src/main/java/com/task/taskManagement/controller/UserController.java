@@ -20,6 +20,28 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @GetMapping("/current")
+    public Map<String, Object> getCurrentUser(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        String email = (String) session.getAttribute("username");
+        
+        if (email != null) {
+            List<User> users = urepo.findByEMAIL(email);
+            if (!users.isEmpty()) {
+                response.put("success", true);
+                response.put("user", users.get(0));
+            } else {
+                response.put("success", false);
+                response.put("error", "User not found");
+            }
+        } else {
+            response.put("success", false);
+            response.put("error", "Not logged in");
+        }
+        
+        return response;
+    }
+
     @PostMapping("/signup")
     public Map<String, Object> signup(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
