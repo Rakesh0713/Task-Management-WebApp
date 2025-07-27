@@ -1,5 +1,6 @@
 package com.task.taskManagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,7 +9,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer user_id;
 
-    private String user_fname;
+    private String user_name;
     private String user_email;
     private String user_pass;
 
@@ -16,8 +17,8 @@ public class User {
     public Integer getUser_id() { return user_id; }
     public void setUser_id(Integer user_id) { this.user_id = user_id; }
 
-    public String getUser_fname() { return user_fname; }
-    public void setUser_fname(String user_fname) { this.user_fname = user_fname; }
+    public String getUser_name() { return user_name; }
+    public void setUser_name(String user_name) { this.user_name = user_name; }
 
     public String getUser_email() { return user_email; }
     public void setUser_email(String user_email) { this.user_email = user_email; }

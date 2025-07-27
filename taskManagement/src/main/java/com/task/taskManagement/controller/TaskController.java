@@ -27,6 +27,7 @@ public class TaskController {
     public Map<String, Object> addTask(@RequestBody Task task, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         task.setUserEmail((String) session.getAttribute("username"));
+        task.setStatus("pending");
         taskRepo.save(task);
         response.put("success", true);
         response.put("message", "Task added successfully.");

@@ -17,7 +17,12 @@ public class Task {
     private LocalDate deadline;
 
     public enum Priority {
-        LOW, MEDIUM, HIGH
+        LOW, MEDIUM, HIGH;
+
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static Priority fromString(String value) {
+            return Priority.valueOf(value.trim().toUpperCase());
+        }
     }
 
     @Enumerated(EnumType.STRING)
